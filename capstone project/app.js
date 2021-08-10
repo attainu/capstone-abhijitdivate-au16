@@ -19,9 +19,11 @@ mongoose.connection.on('error', err => {
 });
 
 const postRoutes = require('./routes/post');
+const authRoutes = require('./routes/auth');
 
 app.use(morgan('dev'));
 app.use('/', postRoutes);
+app.use('/', authRoutes);
 app.use(bodyParser.json());
 app.use(expressValidator());
 
