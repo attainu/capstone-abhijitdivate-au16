@@ -15,6 +15,17 @@ router.get("/allpost",requireLogin,(req,res)=>{
         console.log(err);
     })
 })
+router.get("/getsubpost",requireLogin,(req,res)=>{
+
+    Post.find({postedby:{$in:req.user.following}})
+    .populate("postedby","_id name")
+    .populate("comments.postedBy","_id name")
+    .then(posts=>{
+        res.json(posts)
+    }).catch(err=>{
+        console.log(err);
+    })
+})
 router.post("/createpost" ,requireLogin,(req,res)=>{
     const{title,body,pic} = req.body
     if(!title|| !body || !pic){
@@ -84,7 +95,7 @@ router.put("/comment",requireLogin,(req,res)=>{
         new:true
     })
     .populate("postedBy","_id name")
-    .populate("comments.postedBy","_id name")
+    .populate("comments.postedBy","._id name")
     .exec((err,result)=>{
         if(err){
             return res.status(422).json({error:err})
