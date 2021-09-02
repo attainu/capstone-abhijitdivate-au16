@@ -1,5 +1,21 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../../App';
 export const Profile = () =>{
+
+    // const[Prof, setProf] = useState({})
+    const{state,dispatch} = useContext(UserContext)
+    const[mypics,setPics] = useState([])
+    useEffect(()=>{
+        fetch("/mypost",{
+            headers:{
+                "Authorization":"Bearer "+localStorage.getItem("jwt")
+            }
+        }).then(res=>res.json())
+        .then(result=>{
+            setPics(result.mypost)
+            // setProf(result)
+        })     
+    },[])
     return(
         <div style={{maxWidth:"550px", margin:"0px auto"}}>
             <div style={{
@@ -10,30 +26,35 @@ export const Profile = () =>{
             }}>
                 <div>
                     <img style={{width:"160px",height:"160px",borderRadius:"80px"}}
-                    src="https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bWFufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60" />
+                    src={state?state.pic:"loading"} />
                 </div>
                 <div>
-                    <h4>Anonymous Name</h4>
+                    <h4>{state?state.name:"loading"}</h4>
                     <div style={{
                         display:"flex",
                         justifyContent:"space-around",
                         width:"108%"
 
                     }}>
-                        <h6>30 posts</h6>
-                        <h6>30 followers</h6>
-                        <h6>30 following</h6>
+                        <h6>{mypics.length} posts</h6>
+                        <h6> {state===undefined?"0":state.followers===undefined?"0":state.followers.length} followers</h6>
+                        <h6> {state===undefined?"0":state.following===undefined?"0":state.following.length} following</h6>
                     </div>
                 </div>
             </div>
         
 
             <div className="gallery">
-                <img className="item" src="https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bWFufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60"/>
-                <img className="item" src="https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bWFufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60"/>
-                <img className="item" src="https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bWFufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60"/>
-                <img className="item" src="https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bWFufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60"/>
-                <img className="item" src="https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8bWFufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60"/>
+                {
+                    mypics.map(item=>{
+                        return(
+                            <img key={item._id} className="item" src={item.photo}/>
+
+                        )
+                    })
+                }
+                
+                
             </div>
         </div>
     )
